@@ -210,6 +210,30 @@ function giveHint() {
     }
 }
 
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    document.getElementById('sudoku-board').classList.toggle('dark-mode');
+}
+
+function getUserInput() {
+    const userInput = [];
+    const rows = document.querySelectorAll('#sudoku-board tr');
+    rows.forEach((tr, rowIndex) => {
+        const row = [];
+        const cells = tr.querySelectorAll('td');
+        cells.forEach((td, colIndex) => {
+            const input = td.querySelector('input');
+            if (input) {
+                row.push(Number(input.value) || null);
+            } else {
+                row.push(sudokuBoard[rowIndex][colIndex]);
+            }
+        });
+        userInput.push(row);
+    });
+    return userInput;
+}
+
 function startNewGame() {
     const selectedDifficulty = document.getElementById('difficulty').value;
     sudokuBoard = selectRandomBoard(selectedDifficulty);
