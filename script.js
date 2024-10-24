@@ -11,9 +11,48 @@ const easyBoards = [
         [null, null, null, null, 8, null, null, 7, 9]
     ]
 ];
-const mediumBoards = [/* Add medium boards here */];
-const hardBoards = [/* Add hard boards here */];
-const expertBoards = [/* Add expert boards here */];
+
+const mediumBoards = [
+    [
+        [null, null, 3, null, 2, null, 6, null, null],
+        [9, null, null, 3, null, 5, null, null, 1],
+        [null, null, 1, 8, null, 6, 4, null, null],
+        [null, null, 8, 1, null, 2, 9, null, null],
+        [7, null, null, null, null, null, null, null, 8],
+        [null, null, 6, 7, null, 8, 2, null, null],
+        [null, null, 2, 6, null, 9, 5, null, null],
+        [8, null, null, 2, null, 3, null, null, 9],
+        [null, null, 5, null, 1, null, 3, null, null]
+    ]
+];
+
+const hardBoards = [
+    [
+        [null, null, null, null, null, 2, null, null, null],
+        [null, null, null, 6, null, null, null, null, 3],
+        [null, 7, 4, null, 8, null, null, null, null],
+        [null, null, null, null, null, 3, null, null, 2],
+        [null, 8, null, null, 4, null, null, 1, null],
+        [6, null, null, 5, null, null, null, null, null],
+        [null, null, null, null, 1, null, 7, 8, null],
+        [5, null, null, null, null, 9, null, null, null],
+        [null, null, null, 2, null, null, null, null, null]
+    ]
+];
+
+const expertBoards = [
+    [
+        [8, null, null, null, null, null, null, null, null],
+        [null, null, 3, 6, null, null, null, null, null],
+        [null, 7, null, null, 9, null, 2, null, null],
+        [null, 5, null, null, null, 7, null, null, null],
+        [null, null, null, null, 4, 5, 7, null, null],
+        [null, null, null, 1, null, null, null, 3, null],
+        [null, null, 1, null, null, null, null, 6, 8],
+        [null, null, 8, 5, null, null, null, 1, null],
+        [null, 9, null, null, null, null, 4, null, null]
+    ]
+];
 
 let sudokuBoard, solutionBoard;
 let timer, timeElapsed = 0, hintsAvailable = 3;
