@@ -180,9 +180,11 @@ function giveHint() {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             sudokuBoard[randomCell.row][randomCell.col] = solutionBoard[randomCell.row][randomCell.col];
-            hintsAvailable--;
             createSudokuBoard();
+            hintsAvailable--;
             document.getElementById('hint-counter').textContent = `Hints Left: ${hintsAvailable}`;
+        } else {
+            alert("No empty cells available for a hint.");
         }
     } else {
         alert("No hints left!");
