@@ -86,7 +86,6 @@ function selectRandomBoard(difficulty) {
 }
 
 function shuffleBoard(board) {
-    // Simple shuffling to change the rows and columns for variety
     let newBoard = board.map(row => [...row]);
     for (let i = 0; i < 9; i += 3) {
         [newBoard[i], newBoard[i + 1], newBoard[i + 2]] = [newBoard[i + 1], newBoard[i + 2], newBoard[i]];
@@ -139,6 +138,20 @@ function checkInput() {
             }
         });
     });
+}
+
+function checkSolution() {
+    const userInput = getUserInput();
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (userInput[row][col] !== solutionBoard[row][col]) {
+                alert("Incorrect solution! Please try again.");
+                return;
+            }
+        }
+    }
+    alert("Congratulations! You've completed the puzzle correctly!");
+    stopTimer();
 }
 
 function saveUndoState() {
@@ -221,5 +234,6 @@ document.getElementById('hint-button').addEventListener('click', giveHint);
 document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
 document.getElementById('stop-button').addEventListener('click', stopGame);
 document.getElementById('undo-button').addEventListener('click', undoLastMove);
+document.getElementById('check-button').addEventListener('click', checkSolution);
 initializeEmptyBoard();
 createSudokuBoard();
