@@ -1,6 +1,16 @@
 const easyBoards = [
-    [/* Add pre-filled easy boards here */],
-    [/* Another easy board */]
+    // Example easy board (replace with actual Sudoku puzzles)
+    [
+        [5, 3, null, null, 7, null, null, null, null],
+        [6, null, null, 1, 9, 5, null, null, null],
+        [null, 9, 8, null, null, null, null, 6, null],
+        [8, null, null, null, 6, null, null, null, 3],
+        [4, null, null, 8, null, 3, null, null, 1],
+        [7, null, null, null, 2, null, null, null, 6],
+        [null, 6, null, null, null, null, 2, 8, null],
+        [null, null, null, 4, 1, 9, null, null, 5],
+        [null, null, null, null, 8, null, null, 7, 9]
+    ]
 ];
 const mediumBoards = [/* Add medium boards here */];
 const hardBoards = [/* Add hard boards here */];
@@ -8,6 +18,11 @@ const expertBoards = [/* Add expert boards here */];
 
 let sudokuBoard, solutionBoard;
 let timer, timeElapsed = 0, hintsAvailable = 3;
+
+// Initialize empty board for demonstration
+function initializeEmptyBoard() {
+    sudokuBoard = Array.from({ length: 9 }, () => Array(9).fill(null));
+}
 
 function startTimer() {
     timeElapsed = 0;
@@ -70,8 +85,8 @@ function checkInput() {
         cells.forEach((td, colIndex) => {
             const input = td.querySelector('input');
             if (input) {
-                const correctValue = solutionBoard[rowIndex][colIndex];
-                if (Number(input.value) !== correctValue && input.value !== '') {
+                const correctValue = solutionBoard && solutionBoard[rowIndex][colIndex];
+                if (correctValue && Number(input.value) !== correctValue && input.value !== '') {
                     input.style.color = 'red'; // Incorrect
                 } else {
                     input.style.color = 'black'; // Correct or empty
@@ -91,19 +106,21 @@ function giveHint() {
                 }
             }
         }
-        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        sudokuBoard[randomCell.row][randomCell.col] = solutionBoard[randomCell.row][randomCell.col];
-        hintsAvailable--;
-        createSudokuBoard();
-        document.getElementById('hint-counter').textContent = `Hints Left: ${hintsAvailable}`;
+        if (emptyCells.length > 0) {
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            sudokuBoard[randomCell.row][randomCell.col] = solutionBoard[randomCell.row][randomCell.col];
+            hintsAvailable--;
+            createSudokuBoard();
+            document.getElementById('hint-counter').textContent = `Hints Left: ${hintsAvailable}`;
+        }
     } else {
         alert("No hints left!");
     }
 }
 
-function validateSudoku(board) {
-    // Logic to validate if the solution is correct
-    return true;
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    document.getElementById('sudoku-board').classList.toggle('dark-mode');
 }
 
 function getUserInput() {
@@ -125,46 +142,17 @@ function getUserInput() {
     return userInput;
 }
 
-function saveScore(time) {
-    const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
-    const playerName = prompt("Enter your name:");
-    highScores.push({ name: playerName, time });
-    highScores.sort((a, b) => a.time - b.time);
-    localStorage.setItem('highScores', JSON.stringify(highScores.slice(0, 10)));
-    showLeaderboard();
-}
-
-function showLeaderboard() {
-    const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
-    const leaderboard = document.getElementById('leaderboard');
-    leaderboard.innerHTML = highScores.map((score, index) => `<p>${index + 1}. ${score.name} - ${score.time}s</p>`).join('');
-}
-
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    document.getElementById('sudoku-board').classList.toggle('dark-mode');
-}
-
-document.getElementById('new-game-button').addEventListener('click', () => {
+function startNewGame() {
     const selectedDifficulty = document.getElementById('difficulty').value;
     sudokuBoard = selectRandomBoard(selectedDifficulty);
-    startTimer();
     hintsAvailable = 3;
     document.getElementById('hint-counter').textContent = `Hints Left: ${hintsAvailable}`;
     createSudokuBoard();
-});
+    startTimer();
+}
 
-document.getElementById('check-button').addEventListener('click', () => {
-    const userInput = getUserInput();
-    if (validateSudoku(userInput)) {
-        stopTimer();
-        alert(`Congratulations! You solved it in ${timeElapsed} seconds.`);
-        saveScore(timeElapsed);
-    } else {
-        alert("Incorrect solution. Try again!");
-    }
-});
-
+document.getElementById('new-game-button').addEventListener('click', startNewGame);
 document.getElementById('hint-button').addEventListener('click', giveHint);
 document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
-showLeaderboard();
+initializeEmptyBoard(); // Initialize empty board until the first game is started
+createSudokuBoard(); // Show empty board initially
