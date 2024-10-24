@@ -54,10 +54,9 @@ const expertBoards = [
     ]
 ];
 
-let sudokuBoard, solutionBoard;
+let sudokuBoard, solutionBoard, undoStack = [];
 let timer, timeElapsed = 0, hintsAvailable = 3;
 
-// Initialize empty board for demonstration
 function initializeEmptyBoard() {
     sudokuBoard = Array.from({ length: 9 }, () => Array(9).fill(null));
 }
@@ -76,18 +75,23 @@ function stopTimer() {
 }
 
 function selectRandomBoard(difficulty) {
-    switch (difficulty) {
-        case 'easy':
-            return easyBoards[Math.floor(Math.random() * easyBoards.length)];
-        case 'medium':
-            return mediumBoards[Math.floor(Math.random() * mediumBoards.length)];
-        case 'hard':
-            return hardBoards[Math.floor(Math.random() * hardBoards.length)];
-        case 'expert':
-            return expertBoards[Math.floor(Math.random() * expertBoards.length)];
-        default:
-            return easyBoards[0];
+    const boards = {
+        easy: easyBoards,
+        medium: mediumBoards,
+        hard: hardBoards,
+        expert: expertBoards
+    };
+    const selectedBoards = boards[difficulty];
+    return shuffleBoard(selectedBoards[Math.floor(Math.random() * selectedBoards.length)]);
+}
+
+function shuffleBoard(board) {
+    // Simple shuffling to change the rows and columns for variety
+    let newBoard = board.map(row => [...row]);
+    for (let i = 0; i < 9; i += 3) {
+        [newBoard[i], newBoard[i + 1], newBoard[i + 2]] = [newBoard[i + 1], newBoard[i + 2], newBoard[i]];
     }
+    return newBoard;
 }
 
 function createSudokuBoard() {
@@ -106,7 +110,10 @@ function createSudokuBoard() {
                 input.setAttribute('type', 'number');
                 input.setAttribute('min', '1');
                 input.setAttribute('max', '9');
-                input.addEventListener('input', checkInput);
+                input.addEventListener('input', () => {
+                    saveUndoState();
+                    checkInput();
+                });
                 td.appendChild(input);
             }
             tr.appendChild(td);
@@ -125,13 +132,26 @@ function checkInput() {
             if (input) {
                 const correctValue = solutionBoard && solutionBoard[rowIndex][colIndex];
                 if (correctValue && Number(input.value) !== correctValue && input.value !== '') {
-                    input.style.color = 'red'; // Incorrect
+                    input.style.color = 'red';
                 } else {
-                    input.style.color = 'black'; // Correct or empty
+                    input.style.color = 'black';
                 }
             }
         });
     });
+}
+
+function saveUndoState() {
+    const state = getUserInput();
+    undoStack.push(state);
+}
+
+function undoLastMove() {
+    if (undoStack.length > 0) {
+        const lastState = undoStack.pop();
+        sudokuBoard = lastState;
+        createSudokuBoard();
+    }
 }
 
 function giveHint() {
@@ -184,13 +204,22 @@ function startNewGame() {
     const selectedDifficulty = document.getElementById('difficulty').value;
     sudokuBoard = selectRandomBoard(selectedDifficulty);
     hintsAvailable = 3;
+    undoStack = [];
     document.getElementById('hint-counter').textContent = `Hints Left: ${hintsAvailable}`;
     createSudokuBoard();
     startTimer();
 }
 
+function stopGame() {
+    stopTimer();
+    initializeEmptyBoard();
+    createSudokuBoard();
+}
+
 document.getElementById('new-game-button').addEventListener('click', startNewGame);
 document.getElementById('hint-button').addEventListener('click', giveHint);
 document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
-initializeEmptyBoard(); // Initialize empty board until the first game is started
-createSudokuBoard(); // Show empty board initially
+document.getElementById('stop-button').addEventListener('click', stopGame);
+document.getElementById('undo-button').addEventListener('click', undoLastMove);
+initializeEmptyBoard();
+createSudokuBoard();
