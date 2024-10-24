@@ -83,7 +83,7 @@ function selectRandomBoard(difficulty) {
     };
     const selectedBoards = boards[difficulty];
     const chosenBoard = selectedBoards[Math.floor(Math.random() * selectedBoards.length)];
-    solutionBoard = generateSolutionFromBoard(chosenBoard);
+    solutionBoard = getSolvedBoard(chosenBoard);
     return shuffleBoard(chosenBoard);
 }
 
@@ -95,11 +95,21 @@ function shuffleBoard(board) {
     return newBoard;
 }
 
-function generateSolutionFromBoard(board) {
-    // Placeholder: Replace with actual solution generation logic or use pre-solved boards
-    let solution = board.map(row => row.map(value => value));
-    // Assume it's fully solved; replace this logic with actual Sudoku solving later if needed
-    return solution;
+function getSolvedBoard(board) {
+    // Placeholder: Replace with actual Sudoku solving algorithm or pre-defined solutions
+    // This function should return the correct solution for the given `board`.
+    // Assuming we have a fully solved puzzle here for simplicity.
+    return [
+        [5, 3, 4, 6, 7, 8, 9, 1, 2],
+        [6, 7, 2, 1, 9, 5, 3, 4, 8],
+        [1, 9, 8, 3, 4, 2, 5, 6, 7],
+        [8, 5, 9, 7, 6, 1, 4, 2, 3],
+        [4, 2, 6, 8, 5, 3, 7, 9, 1],
+        [7, 1, 3, 9, 2, 4, 8, 5, 6],
+        [9, 6, 1, 5, 3, 7, 2, 8, 4],
+        [2, 8, 7, 4, 1, 9, 6, 3, 5],
+        [3, 4, 5, 2, 8, 6, 1, 7, 9]
+    ];
 }
 
 function createSudokuBoard() {
@@ -149,6 +159,33 @@ function checkInput() {
     });
 }
 
+function checkSolution() {
+    const userInput = getUserInput();
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            if (userInput[row][col] !== solutionBoard[row][col]) {
+                alert("Incorrect solution! Please try again.");
+                return;
+            }
+        }
+    }
+    alert("Congratulations! You've completed the puzzle correctly!");
+    stopTimer();
+}
+
+function saveUndoState() {
+    const state = getUserInput();
+    undoStack.push(state);
+}
+
+function undoLastMove() {
+    if (undoStack.length > 0) {
+        const lastState = undoStack.pop();
+        sudokuBoard = lastState;
+        createSudokuBoard();
+    }
+}
+
 function giveHint() {
     if (hintsAvailable > 0) {
         const emptyCells = [];
@@ -183,7 +220,11 @@ function startNewGame() {
     startTimer();
 }
 
-// ... (Other functions like undo, stop, check solution remain unchanged)
+function stopGame() {
+    stopTimer();
+    initializeEmptyBoard();
+    createSudokuBoard();
+}
 
 document.getElementById('new-game-button').addEventListener('click', startNewGame);
 document.getElementById('hint-button').addEventListener('click', giveHint);
