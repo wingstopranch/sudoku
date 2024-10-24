@@ -162,3 +162,9 @@ document.getElementById('check-button').addEventListener('click', () => {
         saveScore(timeElapsed);
     } else {
         alert("Incorrect solution. Try again!");
+    }
+});
+
+document.getElementById('hint-button').addEventListener('click', giveHint);
+document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
+showLeaderboard();
